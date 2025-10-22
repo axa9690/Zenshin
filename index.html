@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eisenhower Task Matrix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'quadrant-1': 'hsl(0, 70%, 95%)',
+              'quadrant-1-border': 'hsl(0, 60%, 70%)',
+              'quadrant-2': 'hsl(210, 70%, 95%)',
+              'quadrant-2-border': 'hsl(210, 60%, 70%)',
+              'quadrant-3': 'hsl(39, 70%, 95%)',
+              'quadrant-3-border': 'hsl(39, 60%, 70%)',
+              'quadrant-4': 'hsl(120, 70%, 95%)',
+              'quadrant-4-border': 'hsl(120, 30%, 70%)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .animate-spin {
+        animation: spin 1s linear infinite;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-slate-50 text-slate-800">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

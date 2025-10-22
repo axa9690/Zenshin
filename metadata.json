@@ -1,0 +1,5 @@
+{
+  "name": "My Zenshin",
+  "description": "A task manager that helps you organize and prioritize your tasks for each day using the four-quadrant Eisenhower Matrix: Important/Urgent, Important/Not Urgent, Not Important/Urgent, and Not Important/Not Urgent.",
+  "requestFramePermissions": []
+}
