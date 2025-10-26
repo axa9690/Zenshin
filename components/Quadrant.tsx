@@ -53,11 +53,11 @@ const Quadrant: React.FC<QuadrantProps> = ({ quadrantId, tasks, onUpdateTask, on
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className="mb-4">
+      <div className="mb-4 flex-shrink-0">
         <h2 className={`text-lg font-bold text-slate-800`}>{config.title}</h2>
         <p className="text-sm text-slate-500">{config.description}</p>
       </div>
-      <div className="space-y-3 overflow-y-auto flex-grow pr-1 -mr-1">
+      <div className="space-y-3 flex-grow pr-1 -mr-1">
         {tasks.length > 0 ? (
           tasks.map((task) => (
             <TaskCard 

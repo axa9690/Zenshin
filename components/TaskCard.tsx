@@ -48,7 +48,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onUpdateTask, onDeleteTask, o
             <ChevronDownIcon />
           </button>
           {isMenuOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-slate-200">
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-25 border border-slate-200">
               <div className="py-1">
                 <button onClick={() => { onEditTask(task); setIsMenuOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 flex items-center gap-2"><EditIcon /> Edit</button>
                 <div className="border-t border-slate-200 my-1"></div>
