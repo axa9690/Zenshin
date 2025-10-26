@@ -13,7 +13,7 @@ interface TaskBoardProps {
 
 const TaskBoard: React.FC<TaskBoardProps> = ({ tasks, onUpdateTask, onDeleteTask, onEditTask, onMoveBacklogToBoard }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 h-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
       {QUADRANT_ORDER.map((quadrantId) => (
         <Quadrant
           key={quadrantId}
