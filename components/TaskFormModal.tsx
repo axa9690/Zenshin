@@ -22,6 +22,65 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, onSaveTa
   const [quadrant, setQuadrant] = useState<QuadrantType>(QuadrantType.IMPORTANT_URGENT);
   const [date, setDate] = useState(currentDate);
   const [addToBoard, setAddToBoard] = useState(mode !== 'add');
+  const [showManualOverride, setShowManualOverride] = useState(false);
+
+  // AI Categorization
+  const {
+    result: aiResult,
+    status: aiStatus,
+    isLoading: isAILoading,
+    error: aiError,
+    fromCache: aiFromCache,
+    retry,
+    isAvailable: aiAvailable
+  } = useAICategorization();
+
+  // Debounce inputs for AI analysis
+  const debouncedTitle = useDebounce(title, 500);
+  const debouncedDescription = useDebounce(description, 500);
+
+  // Auto-trigger AI categorization when inputs change and conditions are met
+  useEffect(() => {
+    if (
+      aiAvailable &&
+      !showManualOverride &&
+      (addToBoard || mode === 'edit') &&
+      debouncedTitle.trim().length >= 3 &&
+      mode !== 'backlog'
+    ) {
+      // Don't analyze if we're editing an existing task with the same content
+      if (task && 'quadrant' in task) {
+        const contentUnchanged = task.title === debouncedTitle.trim() &&
+                               task.description === debouncedDescription.trim();
+        if (contentUnchanged) {
+          return;
+        }
+      }
+
+      categorizeWithAI(debouncedTitle.trim(), debouncedDescription.trim());
+    }
+  }, [debouncedTitle, debouncedDescription, aiAvailable, showManualOverride, addToBoard, mode]);
+
+  // Categorize task with AI
+  const categorizeWithAI = async (titleText: string, descriptionText: string) => {
+    try {
+      await retry();
+    } catch (error) {
+      // Error is handled by the hook
+    }
+  };
+
+  // Auto-select quadrant when AI provides a result
+  useEffect(() => {
+    if (aiResult && !showManualOverride && aiStatus === AIStatus.SUCCESS) {
+      setQuadrant(aiResult.quadrant);
+    }
+  }, [aiResult, showManualOverride, aiStatus]);
+
+  // Determine if AI should be shown
+  const shouldShowAI = useMemo(() => {
+    return aiAvailable && (addToBoard || mode === 'edit') && mode !== 'backlog';
+  }, [aiAvailable, addToBoard, mode]);
 
   useEffect(() => {
     if (task) {
