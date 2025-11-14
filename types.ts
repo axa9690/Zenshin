@@ -20,3 +20,25 @@ export interface BacklogTask {
   title: string;
   description: string;
 }
+
+// AI Categorization Types
+export interface AICategorizationResult {
+  quadrant: QuadrantType;
+  reasoning: string;
+  confidence: number;
+}
+
+export enum AIStatus {
+  IDLE = 'idle',
+  ANALYZING = 'analyzing',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  UNCERTAIN = 'uncertain'
+}
+
+export interface CacheEntry {
+  taskHash: string;
+  result: AICategorizationResult;
+  timestamp: number;
+  simpleTask: boolean;
+}
