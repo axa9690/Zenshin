@@ -166,6 +166,85 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, onSaveTa
               className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
+
+          {/* AI Analysis Section */}
+          {shouldShowAI && title.trim().length >= 3 && (
+            <div className="mb-4">
+              {isAILoading && (
+                <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <SpinnerIcon />
+                  <span className="text-sm text-blue-700">
+                    AI analyzing task importance{aiFromCache ? ' (from cache)' : ''}...
+                  </span>
+                </div>
+              )}
+
+              {aiResult && !showManualOverride && (
+                <div className={`p-3 border rounded-md ${
+                  aiStatus === AIStatus.UNCERTAIN
+                    ? 'bg-yellow-50 border-yellow-200'
+                    : 'bg-green-50 border-green-200'
+                }`}>
+                  <div className="flex items-start gap-2">
+                    <CheckIcon className="text-green-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-slate-700">
+                        Assigned to: {QUADRANT_CONFIG[aiResult.quadrant].title}
+                        {aiFromCache && (
+                          <span className="ml-1 text-xs text-slate-500">(cached)</span>
+                        )}
+                      </p>
+                      <p className="text-xs text-slate-600 mt-1">
+                        AI reasoning: {aiResult.reasoning}
+                      </p>
+                      {aiStatus === AIStatus.UNCERTAIN && (
+                        <p className="text-xs text-yellow-700 mt-1">
+                          AI is uncertain - you may want to verify this categorization
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowManualOverride(true)}
+                    className="mt-2 text-xs text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Choose manually instead
+                  </button>
+                </div>
+              )}
+
+              {aiError && !showManualOverride && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                  <div className="flex items-start gap-2">
+                    <WarningIcon className="text-red-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm text-red-700">AI categorization failed</p>
+                      <p className="text-xs text-red-600 mt-1">{aiError}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => categorizeWithAI(title.trim(), description.trim())}
+                      className="text-xs text-red-600 hover:text-red-800 underline"
+                    >
+                      Try again
+                    </button>
+                    <span className="text-xs text-slate-400">or</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowManualOverride(true)}
+                      className="text-xs text-blue-600 hover:text-blue-800 underline"
+                    >
+                      Choose manually
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {mode === 'add' && (
               <div className="flex items-center mb-4">
                   <input id="addToBoard" type="checkbox" checked={addToBoard} onChange={(e) => setAddToBoard(e.target.checked)} className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"/>
@@ -175,19 +254,44 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, onSaveTa
 
           {(addToBoard || mode === 'edit') && (
             <>
-              <div className="mb-4">
-                <label htmlFor="quadrant" className="block text-sm font-medium text-slate-700">Quadrant</label>
-                <select
-                  id="quadrant"
-                  value={quadrant}
-                  onChange={(e) => setQuadrant(e.target.value as QuadrantType)}
-                  className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {QUADRANT_ORDER.map(qId => (
-                    <option key={qId} value={qId}>{QUADRANT_CONFIG[qId].title}</option>
-                  ))}
-                </select>
-              </div>
+              {(showManualOverride || !shouldShowAI || title.trim().length < 3) && (
+                <div className="mb-4">
+                  <label htmlFor="quadrant" className="block text-sm font-medium text-slate-700">
+                    Quadrant {shouldShowAI && title.trim().length >= 3 && '(Manual Selection)'}
+                  </label>
+                  <select
+                    id="quadrant"
+                    value={quadrant}
+                    onChange={(e) => setQuadrant(e.target.value as QuadrantType)}
+                    className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {QUADRANT_ORDER.map(qId => (
+                      <option key={qId} value={qId}>{QUADRANT_CONFIG[qId].title}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {aiResult && !showManualOverride && shouldShowAI && title.trim().length >= 3 && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Selected Quadrant (AI Recommendation)
+                  </label>
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-md">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${
+                        aiResult.quadrant === QuadrantType.IMPORTANT_URGENT ? 'bg-red-500' :
+                        aiResult.quadrant === QuadrantType.IMPORTANT_NOT_URGENT ? 'bg-blue-500' :
+                        aiResult.quadrant === QuadrantType.NOT_IMPORTANT_URGENT ? 'bg-yellow-500' :
+                        'bg-gray-500'
+                      }`} />
+                      <span className="text-sm font-medium text-slate-700">
+                        {QUADRANT_CONFIG[aiResult.quadrant].title}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="mb-6">
                 <label htmlFor="date" className="block text-sm font-medium text-slate-700">Date</label>
                 <input
