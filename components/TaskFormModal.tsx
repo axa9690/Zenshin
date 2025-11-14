@@ -1,7 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
-import { Task, BacklogTask, QuadrantType } from '../types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Task, BacklogTask, QuadrantType, AIStatus } from '../types';
 import { QUADRANT_CONFIG, QUADRANT_ORDER } from '../constants';
+import { useAICategorization } from '../hooks/useAICategorization';
+import { useDebounce } from '../hooks/useDebounce';
+import { SpinnerIcon, CheckIcon, WarningIcon } from './Icons';
 
 interface TaskFormModalProps {
   isOpen: boolean;
