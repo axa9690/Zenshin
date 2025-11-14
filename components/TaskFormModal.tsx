@@ -136,7 +136,14 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ isOpen, onClose, onSaveTa
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md m-4">
-        <h2 className="text-2xl font-bold mb-4">{getTitle()}</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-slate-700">{getTitle()}</h2>
+          {shouldShowAI && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              AI-Powered
+            </span>
+          )}
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium text-slate-700">Title</label>
